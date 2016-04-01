@@ -1,5 +1,4 @@
-require(httr)
-require(magrittr)
+#' @import httr
 
 genURI <- function(api) {
     paste0("https://api.weibo.com/2/", api, ".json")

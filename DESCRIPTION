@@ -1,0 +1,15 @@
+Package: weiborr
+Title: A Simple Sina Weibo Client
+Version: 0.0.0.9000
+Author: Chung-hong Chan
+Maintainer: Chung-hong Chan <chainsawtiney@gmail.com>
+Description: A simple to use Sina Weibo Client.
+Depends:
+    R (>= 3.2.4)
+Imports:
+    httr
+Suggests:
+    magrittr
+License: GPL-2
+LazyData: true
+RoxygenNote: 5.0.1
