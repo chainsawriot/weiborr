@@ -19,12 +19,12 @@ weibo_auth <- function(wb_source = NULL, access_token = NULL) {
 }
 
 #' @export
-weibo_get <- function(credential, api = NULL, ...) {
+weibo_get <- function(credential, api = "friendships/friends", ...) {
     if (is.null(credential)) {
         stop("Please provide the credential information.")
     }
     if (is.null(api)) {
-        stop("Please provide the API to query.")
+        stop("Please provide an API to query.")
     }
     if ("wb_source" %in% names(credential)) {
         res <- content(GET(genURI(api), query = list(source = credential$wb_source, ...)))
