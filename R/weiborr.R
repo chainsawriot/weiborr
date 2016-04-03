@@ -1,4 +1,5 @@
 #' @import httr
+#' @import plyr
 
 gen_uri <- function(api) {
     paste0("https://api.weibo.com/2/", api, ".json")
@@ -30,6 +31,9 @@ weibo_get <- function(credential, api = "friendships/friends", ...) {
         res <- content(GET(gen_uri(api), query = list(source = credential$wb_source, ...)))
     } else if ("access_token" %in% names(credential)) {
         res <- content(GET(gen_uri(api), query = list(access_token = credential$access_token, ...)))
+    }
+    if ("users" %in% names(res)) {
+        res <- gen_multiple_weibo_users(res)
     }
     return(res)
 }
