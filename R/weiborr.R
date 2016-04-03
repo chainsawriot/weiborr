@@ -1,6 +1,6 @@
 #' @import httr
 
-genURI <- function(api) {
+gen_uri <- function(api) {
     paste0("https://api.weibo.com/2/", api, ".json")
 }
 
@@ -27,9 +27,9 @@ weibo_get <- function(credential, api = "friendships/friends", ...) {
         stop("Please provide an API to query.")
     }
     if ("wb_source" %in% names(credential)) {
-        res <- content(GET(genURI(api), query = list(source = credential$wb_source, ...)))
+        res <- content(GET(gen_uri(api), query = list(source = credential$wb_source, ...)))
     } else if ("access_token" %in% names(credential)) {
-        res <- content(GET(genURI(api), query = list(access_token = credential$access_token, ...)))
+        res <- content(GET(gen_uri(api), query = list(access_token = credential$access_token, ...)))
     }
     return(res)
 }
