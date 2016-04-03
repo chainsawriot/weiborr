@@ -32,9 +32,15 @@ to_df.multiple_weibo_users <- function(obj) {
 
 gen_multiple_weibo_users <- function(frds) {
     if (!"users" %in% (names(frds))) {
-        stop("Not a API result from a 'user/...' query.")
+        stop("Not a API result from a 'friendships/...' query.")
     }
-    frds$users <- lapply(frds$users, function(x) make_class(x, "weibo_user"))
+    frds$users <- plyr::llply(frds$users, function(x) make_class(x, "weibo_user"))
     frds$users <- make_class(frds$users, "multiple_weibo_users")
     return(frds)
+}
+
+#### ERROR
+
+print.weibo_error <- function(obj) {
+    cat("Weibo error, error code:", obj$error_code, ".\n")
 }

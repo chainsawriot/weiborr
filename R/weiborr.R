@@ -20,7 +20,7 @@ weibo_auth <- function(wb_source = NULL, access_token = NULL) {
 }
 
 #' @export
-weibo_get <- function(credential, api = "friendships/friends", ...) {
+weibo_get <- function(credential, api = "friendships/friends", ..., raise_weibo_error = TRUE) {
     if (is.null(credential)) {
         stop("Please provide the credential information.")
     }
@@ -34,6 +34,12 @@ weibo_get <- function(credential, api = "friendships/friends", ...) {
     }
     if ("users" %in% names(res)) {
         res <- gen_multiple_weibo_users(res)
+    }
+    if ("error" %in% names(res)) {
+        res <- make_class(res, "weibo_error")
+        if (!ignore_weibo_error) {
+            stop(paste0("API error, error msg: ", res$error))
+        }
     }
     return(res)
 }
