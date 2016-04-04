@@ -20,7 +20,7 @@ weibo_auth <- function(wb_source = NULL, access_token = NULL) {
 }
 
 #' @export
-weibo_get <- function(credential, api = "friendships/friends", ..., ignore_weibo_error = TRUE) {
+weibo_get <- function(credential, api = "friendships/friends", ..., ignore_weibo_error = FALSE) {
     if (is.null(credential)) {
         stop("Please provide the credential information.")
     }
