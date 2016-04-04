@@ -32,6 +32,14 @@ weibo_get <- function(credential, api = "friendships/friends", ..., ignore_weibo
     } else if ("access_token" %in% names(credential)) {
         res <- content(GET(gen_uri(api), query = list(access_token = credential$access_token, ...)))
     }
+    if ("error" %in% names(res)) {
+        res <- make_class(res, "weibo_error")
+        if (!ignore_weibo_error) {
+            stop(paste0("API error, error msg: ", res$error))
+        }
+        return(res)
+    }
+
     if ("users" %in% names(res)) {
         res <- gen_multiple_weibo_users(res)
     }
@@ -44,11 +52,8 @@ weibo_get <- function(credential, api = "friendships/friends", ..., ignore_weibo
             res$status <- make_weibo_status(res$status)
         }
     }
-    if ("error" %in% names(res)) {
-        res <- make_class(res, "weibo_error")
-        if (!ignore_weibo_error) {
-            stop(paste0("API error, error msg: ", res$error))
-        }
+    if (api == 'statuses/show') {
+        res <- make_weibo_status(res)
     }
     return(res)
 }

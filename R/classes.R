@@ -51,6 +51,29 @@ make_weibo_status <- function(obj) {
     return(obj)
 }
 
+fields_to_extract <- c("created_at", "mid", "text", "truncated", "source", "in_reply_to_status_id", "in_reply_to_user_id", "in_reply_to_screen_name", "pic_urls", "geo", "user", "retweeted_status", "reposts_count", "comments_count", "attitudes_count", "isLongText")
+
+extract_tweet <- function(weibo_status, fields = fields_to_extract) {
+    s_status <- weibo_status[names(weibo_status) %in% fields]
+    s_status$geo <- ifelse(is.null(s_status$geo), NA, paste0(s_status$geo$coordinates[[1]], ",", s_status$geo$coordinates[[2]]))
+    s_status$user <- s_status$user$id
+    s_status$retweeted_status <- ifelse(is.null(s_status$retweeted_status), NA, s_status$retweeted_status$mid)
+    s_status$pic_urls <- ifelse(length(s_status$pic_urls) == 0, NA, paste(sapply(s_status$pic_urls, function(x) x$thumbnail_pic), collapse = ","))
+    return(as.data.frame.list(s_status, stringsAsFactors = FALSE))
+}
+
+to_df.weibo_status <- function(obj, level = "tweets") {
+    if (level == "tweets") {
+        return(extract_tweet(obj, fields_to_extract))
+    }
+}
+
+to_df.multiple_weibo_statuses <- function(obj, level = "tweets") {
+    if (level == "tweets") {
+        return(plyr::ldply(obj, to_df))
+    }
+}
+
 ## weibo_user and multiple_weibo_users
 
 print.multiple_weibo_users <- function(obj) {
