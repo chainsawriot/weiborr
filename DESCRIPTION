@@ -5,7 +5,7 @@ Author: Chung-hong Chan
 Maintainer: Chung-hong Chan <chainsawtiney@gmail.com>
 Description: A simple to use Sina Weibo Client.
 Depends:
-    R (>= 3.2.4)
+    R (>= 3.0.0)
 Imports:
     httr,
     plyr
