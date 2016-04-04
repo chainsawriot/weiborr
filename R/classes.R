@@ -12,12 +12,20 @@ make_class <- function(x, which_class) {
     return(x)
 }
 
+#' @export
+to_df <- function(obj, ...) {
+    UseMethod("to_df", obj)
+}
+
+
 ## weibo_status
 
+#' @export
 print.multiple_weibo_statuses <- function(obj) {
     cat("Collection of", length(obj), "weibo status(es).\n")
 }
 
+#' @export
 print.weibo_status <- function(obj) {
     if (nchar(obj$text) > 10) {
         preview <- paste0(substr(obj$text, 1, 10), "...")
@@ -62,24 +70,38 @@ extract_tweet <- function(weibo_status, fields = fields_to_extract) {
     return(as.data.frame.list(s_status, stringsAsFactors = FALSE))
 }
 
+#' @export
 to_df.weibo_status <- function(obj, level = "tweets") {
     if (level == "tweets") {
         return(extract_tweet(obj, fields_to_extract))
     }
 }
 
+#' @export
 to_df.multiple_weibo_statuses <- function(obj, level = "tweets") {
     if (level == "tweets") {
         return(plyr::ldply(obj, to_df))
+    }
+    if (level == "retweets") {
+        retweets <- plyr::llply(Filter(function(x) !is.null(x$retweeted_status), obj), function(x) x$retweeted_status)
+        return(plyr::ldply(retweets, to_df))
+    }
+    if (level == "users") {
+        ori_users <- plyr::llply(obj, function(x) x$user)
+        rt_users <- plyr::llply(Filter(function(x) !is.null(x$retweeted_status), obj), function(x) x$retweeted_status$user)
+        all_users <- Filter(function(x) !is.null(x), append(ori_users, rt_users))
+        return(unique(plyr::ldply(all_users, to_df)))
     }
 }
 
 ## weibo_user and multiple_weibo_users
 
+#' @export
 print.multiple_weibo_users <- function(obj) {
     cat("Collection of", length(obj), "weibo user(s).\n")
 }
 
+#' @export
 print.weibo_user <- function(obj) {
     if (!"status" %in% names(obj)) {
         cat("Weibo user: id", obj$id, ".\n")
@@ -88,10 +110,7 @@ print.weibo_user <- function(obj) {
     }
 }
 
-to_df <- function(obj) {
-    UseMethod("to_df")
-}
-
+#' @export
 to_df.weibo_user <- function(obj) {
     if (!'status' %in% names(obj)) {
         return(as.data.frame.list(obj, stringsAsFactors = FALSE))
@@ -101,6 +120,7 @@ to_df.weibo_user <- function(obj) {
     }
 }
 
+#' @export
 to_df.multiple_weibo_users <- function(obj) {
     return(plyr::ldply(obj, to_df))
 }
@@ -116,6 +136,7 @@ gen_multiple_weibo_users <- function(res) {
 
 #### weibo_error
 
+#' @export
 print.weibo_error <- function(obj) {
     cat("Weibo error, error code:", obj$error_code, ".\n")
 }
